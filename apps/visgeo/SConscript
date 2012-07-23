@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 source_list = ["main.cpp",
-               "mainframe.cpp"
+               "mainframe.cpp",
+               "glcanvas.cpp"
                ]
 # source_list = ["wxauitest.cpp",
 #                "manager.cpp"

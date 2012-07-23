@@ -35,7 +35,7 @@ int main(int argc, char * argv[])
 bool MyApp::OnInit()
 {
     MainFrame *frame = new MainFrame( _(APPLICATION_TITLE), wxPoint(50, 50),
-                                  wxSize(640, 480) );
+									  wxSize(640, 480) );
     frame->Show(true);
     // SetTopWindow(frame);
     return true;
