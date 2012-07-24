@@ -7,12 +7,6 @@
 #include "res/preview.xpm"
 
 
-
-
-
-
-
-
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	: wxFrame( NULL, -1, title, pos, size ),
 	  m_bitmap(wxBitmap()),
@@ -44,11 +38,13 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 		wxBitmap bitmapOpen(open_xpm);
 		wxBitmap bitmapSave(save_xpm);
 		wxBitmap bitmapView(preview_xpm);
-		toolBar->AddTool((int)wxID_NEW,  bitmapNew,  wxNullBitmap);
-		toolBar->AddTool((int)wxID_OPEN, bitmapOpen, wxNullBitmap);
-		toolBar->AddTool((int)wxID_SAVE, bitmapSave, wxNullBitmap);
-		toolBar->AddTool((int)wxID_PREVIEW, bitmapView, wxNullBitmap);
+
+		toolBar->AddTool((int)wxID_NEW,  wxT("New"),  bitmapNew,  wxNullBitmap);
+		toolBar->AddTool((int)wxID_OPEN, wxT("Open"), bitmapOpen, wxNullBitmap);
+		toolBar->AddTool((int)wxID_SAVE, wxT("Save"), bitmapSave, wxNullBitmap);
+		toolBar->AddTool((int)wxID_PREVIEW, wxT("View"), bitmapView, wxNullBitmap);
 		// SetToolBar(toolBar);
+		toolBar->Realize();
 	}
 	{
 		// m_canvas.SetBackgroundColor();
@@ -60,7 +56,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	Connect(wxID_OPEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileOpen));
 	Connect(ID_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnQuit));
 	Connect(ID_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnAbout));
-	Connect(wxID_ANY, wxEVT_PAINT, wxPaintEventHandler(MainFrame::OnPaint));
+	Connect(wxEVT_PAINT, wxPaintEventHandler(MainFrame::OnPaint));
 }
 
 void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -70,7 +66,8 @@ void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-    wxMessageBox( _("This is a wxWidgets Hello world sample"),
+    wxMessageBox( _("Visual Geometry is a program for visualizing geometry relation between a set of related images.\n"
+					"Copyright 2012 (C) Liangfu Chen"),
                   _("About "APPLICATION_TITLE),
                   wxOK | wxICON_INFORMATION, this);
 }
@@ -85,8 +82,7 @@ void MainFrame::OnMenuFileOpen(wxCommandEvent & event)
 								 );
 	if ( fn.empty() ){return;}
 
-	fprintf(stderr, "%s\n", __func__);
-	wxImage * image = new wxImage(fn, wxBITMAP_TYPE_JPEG, -1);
+	wxImage * image = new wxImage(fn);
 	// if (!image.LoadFile(fn,wxBITMAP_TYPE_JPEG)){
 	// 	wxLogError(_T("Couldn't load image from '%s'."), fn.c_str());
 	// 	return;
@@ -97,7 +93,20 @@ void MainFrame::OnMenuFileOpen(wxCommandEvent & event)
 
 void MainFrame::OnPaint(wxPaintEvent & WXUNUSED(event))
 {
-	fprintf(stderr, "mainframe::%s\n", __func__);
 	wxPaintDC dc(this);
-	dc.DrawBitmap(m_bitmap,0,0,0);
+	// fprintf(stderr, "size: %d,%d\n",
+	// 		m_canvas.GetSize().GetWidth(), m_bitmap.GetWidth());
+	dc.DrawBitmap(m_bitmap,
+				  10,10,0);
+	m_canvas.Center();
+	wxCoord x1 = 50, y1 = 60;
+	wxCoord x2 = 190, y2 = 60;
+
+	dc.DrawLine(x1, y1, x2, y2);
+	// dc.DrawCircle(10,10,0);
+				  // (m_canvas.GetSize().GetWidth() -
+				  //  m_bitmap.GetWidth ())/2.,
+				  // (m_canvas.GetSize().GetHeight()-
+				  //  m_bitmap.GetHeight())/2.,
+				  // 0);
 }

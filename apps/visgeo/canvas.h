@@ -26,13 +26,11 @@ public:
 		Connect(wxID_ANY, wxEVT_PAINT, wxPaintEventHandler(Canvas::OnPaint));
 	}
 	void loadBitmap(const wxBitmap& bitmap){
-	fprintf(stderr, "%s\n", __func__);
 		m_bitmap = wxBitmap(bitmap);
 		Refresh(false);
 	}
 	void OnPaint(wxPaintEvent & WXUNUSED(event))
 	{
-	fprintf(stderr, "%s\n", __func__);
 		wxPaintDC dc(this);
 		dc.DrawBitmap(m_bitmap,0,0,0);
 	}
