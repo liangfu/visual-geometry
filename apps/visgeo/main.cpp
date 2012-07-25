@@ -37,6 +37,9 @@ bool MyApp::OnInit()
     MainFrame *frame = new MainFrame( _(APPLICATION_TITLE), wxPoint(50, 50),
 									  wxSize(640, 480) );
     frame->Show(true);
+	if (argc==2){
+		frame->fileOpen(wxString(argv[1]));
+	}
     // SetTopWindow(frame);
     return true;
 }

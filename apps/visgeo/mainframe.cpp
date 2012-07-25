@@ -6,6 +6,7 @@
 #include "res/save.xpm"
 #include "res/preview.xpm"
 
+#include <wx/numdlg.h>
 
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	: wxFrame( NULL, -1, title, pos, size ),
@@ -21,6 +22,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     wxMenu *menuEdit = new wxMenu;
     menuEdit->Append( wxID_ANY, _("&Undo\tCtrl-Z") );
+    wxMenu *menuToolkit = new wxMenu;
+    menuToolkit->Append( ID_INPAINT, _("&Inpaint") );
 
     wxMenu *menuAbout = new wxMenu;
     menuAbout->Append( ID_ABOUT, _("&About...") );
@@ -28,6 +31,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     wxMenuBar *menuBar = new wxMenuBar;
     menuBar->Append( menuFile, _("&File") );
     menuBar->Append( menuEdit, _("&Edit") );
+    menuBar->Append( menuToolkit, _("&Toolkit") );
     menuBar->Append( menuAbout, _("&About") );
 
     SetMenuBar( menuBar );
@@ -56,7 +60,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	Connect(wxID_OPEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileOpen));
 	Connect(ID_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnQuit));
 	Connect(ID_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnAbout));
-	Connect(wxEVT_PAINT, wxPaintEventHandler(MainFrame::OnPaint));
+	Connect(ID_INPAINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuToolkitInpaint));
+	// Connect(wxEVT_PAINT, wxPaintEventHandler(MainFrame::OnPaint));
 }
 
 void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -66,8 +71,8 @@ void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-    wxMessageBox( _("Visual Geometry is a program for visualizing geometry relation between a set of related images.\n"
-					"Copyright 2012 (C) Liangfu Chen"),
+    wxMessageBox( _("Visual Geometry is a program for multimedia processing.\n"
+					"Copyright (C) 2012 Liangfu Chen"),
                   _("About "APPLICATION_TITLE),
                   wxOK | wxICON_INFORMATION, this);
 }
@@ -82,31 +87,32 @@ void MainFrame::OnMenuFileOpen(wxCommandEvent & event)
 								 );
 	if ( fn.empty() ){return;}
 
-	wxImage * image = new wxImage(fn);
-	// if (!image.LoadFile(fn,wxBITMAP_TYPE_JPEG)){
-	// 	wxLogError(_T("Couldn't load image from '%s'."), fn.c_str());
-	// 	return;
-	// }
-	m_bitmap = wxBitmap(*image);
+	wxImage image(fn);
+	m_imgOriginal = cv::Mat::Mat(image.GetHeight(), image.GetWidth(),
+								 CV_8UC3);
+	memcpy(m_imgOriginal.data, image.GetData(), 
+		   sizeof(uchar)*image.GetWidth()*image.GetHeight()*3);
+	m_bitmap = wxBitmap(image);
 	m_canvas.loadBitmap(m_bitmap);
+	m_canvas.Refresh(false);
 }
 
-void MainFrame::OnPaint(wxPaintEvent & WXUNUSED(event))
+void MainFrame::fileOpen(const wxString fn)
 {
-	wxPaintDC dc(this);
-	// fprintf(stderr, "size: %d,%d\n",
-	// 		m_canvas.GetSize().GetWidth(), m_bitmap.GetWidth());
-	dc.DrawBitmap(m_bitmap,
-				  10,10,0);
-	m_canvas.Center();
-	wxCoord x1 = 50, y1 = 60;
-	wxCoord x2 = 190, y2 = 60;
+	if ( fn.empty() ){return;}
 
-	dc.DrawLine(x1, y1, x2, y2);
-	// dc.DrawCircle(10,10,0);
-				  // (m_canvas.GetSize().GetWidth() -
-				  //  m_bitmap.GetWidth ())/2.,
-				  // (m_canvas.GetSize().GetHeight()-
-				  //  m_bitmap.GetHeight())/2.,
-				  // 0);
+	wxImage image(fn);
+	m_bitmap = wxBitmap(image);
+	m_canvas.loadBitmap(m_bitmap);
+	m_canvas.Refresh(false);
+}
+
+void MainFrame::OnMenuToolkitInpaint(wxCommandEvent& event)
+{
+	int brushsize =
+		wxGetNumberFromUser(wxT("Please assign brush size:"), wxEmptyString,
+							wxT("Set brush size"),
+							3, 1, 100, this);
+	NOTIFY("%d", brushsize);
+	cv::imshow("test", m_imgOriginal);
 }

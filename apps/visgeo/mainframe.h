@@ -16,9 +16,13 @@
 #include "glcanvas.h"
 #include "canvas.h"
 
+#include "opencv/cv.h"
+#include "opencv/highgui.h"
+
 enum {
-	ID_QUIT = wxID_HIGHEST,
+	ID_QUIT = wxID_HIGHEST+1,
 	ID_ABOUT,
+	ID_INPAINT
 };
 
 
@@ -27,14 +31,17 @@ class MainFrame: public wxFrame
 	wxBitmap m_bitmap;
 	// TestGLCanvas m_glcanvas;
 	Canvas m_canvas;
+	cv::Mat m_imgOriginal;
 public:
 
     MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
 
 	void OnMenuFileOpen(wxCommandEvent & event);
+	void fileOpen(const wxString fn);
     void OnQuit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
-	void OnPaint(wxPaintEvent & event);
+    void OnMenuToolkitInpaint(wxCommandEvent& event);
+	// void OnPaint(wxPaintEvent & event);
     // DECLARE_EVENT_TABLE()
 };
 

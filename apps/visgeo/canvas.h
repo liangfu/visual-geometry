@@ -29,11 +29,7 @@ public:
 		m_bitmap = wxBitmap(bitmap);
 		Refresh(false);
 	}
-	void OnPaint(wxPaintEvent & WXUNUSED(event))
-	{
-		wxPaintDC dc(this);
-		dc.DrawBitmap(m_bitmap,0,0,0);
-	}
+	void OnPaint(wxPaintEvent & event);
 };
 
 
