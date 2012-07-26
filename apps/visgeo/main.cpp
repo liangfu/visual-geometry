@@ -9,7 +9,7 @@
  */
 
 #include "common.h"
-#include "mainframe.h"
+#include "mainwindow.h"
 
 class MyApp: public wxApp
 {
@@ -34,7 +34,7 @@ int main(int argc, char * argv[])
 
 bool MyApp::OnInit()
 {
-    MainFrame *frame = new MainFrame( _(APPLICATION_TITLE), wxPoint(50, 50),
+    MainWindow *frame = new MainWindow( _(APPLICATION_TITLE), wxPoint(50, 50),
 									  wxSize(640, 480) );
     frame->Show(true);
 	if (argc==2){

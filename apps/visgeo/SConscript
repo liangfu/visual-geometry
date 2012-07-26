@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 source_list = ["main.cpp",
-               "mainframe.cpp",
+               "mainwindow.cpp",
+               # "mainframe.cpp",
                "glcanvas.cpp",
                "canvas.cpp"
                ]

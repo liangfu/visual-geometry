@@ -16,20 +16,17 @@
 class Canvas : public wxWindow
 {
 	wxBitmap m_bitmap;
+	wxRect m_rect;
 public:
 	Canvas(wxWindow* parent, wxWindowID id,
 		   const wxPoint& pos = wxDefaultPosition,
-		   const wxSize& size = wxDefaultSize):
-		wxWindow(parent, id),
-		m_bitmap(wxBitmap())
-	{
-		Connect(wxID_ANY, wxEVT_PAINT, wxPaintEventHandler(Canvas::OnPaint));
-	}
+		   const wxSize& size = wxDefaultSize);
 	void loadBitmap(const wxBitmap& bitmap){
 		m_bitmap = wxBitmap(bitmap);
 		Refresh(false);
 	}
 	void OnPaint(wxPaintEvent & event);
+	void OnMouseEvent(wxMouseEvent & event);
 };
 
 
