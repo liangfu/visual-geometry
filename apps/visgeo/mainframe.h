@@ -1,4 +1,4 @@
-/**
+/** 
  * @file   mainframe.h
  * @author Liangfu Chen <chenclf@gmail.com>
  * @date   Fri Jul 27 00:21:24 2012
@@ -17,18 +17,19 @@
 class MainFrame : public wxWindow
 {
 	wxBitmap m_bitmap;
-	Canvas m_canvas;
+	// Canvas m_canvas;
 	wxRect m_rect;
 public:
 	MainFrame(wxWindow* parent, wxWindowID id,
-		   const wxPoint& pos = wxDefaultPosition,
-		   const wxSize& size = wxDefaultSize);
+			  const wxPoint& pos = wxDefaultPosition,
+			  const wxSize& size = wxDefaultSize);
 	void loadBitmap(const wxBitmap& bitmap){
-		m_bitmap = wxBitmap(bitmap);
+		m_bitmap = bitmap;
+		// m_canvas.loadBitmap(bitmap);
 		Refresh(false);
 	}
 	void OnPaint(wxPaintEvent & event);
-	void OnMouseEvent(wxMouseEvent & event);
+	// void OnMouseEvent(wxMouseEvent & event);
 };
 
 

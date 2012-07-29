@@ -2,8 +2,10 @@
 
 source_list = ["main.cpp",
                "mainwindow.cpp",
-               # "mainframe.cpp",
+               "mainframe.cpp",
                "glcanvas.cpp",
+               "abstractcanvas.cpp",
+               "abstractimageeditdlg.cpp",
                "canvas.cpp"
                ]
 # source_list = ["wxauitest.cpp",

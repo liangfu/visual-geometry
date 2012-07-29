@@ -1,3 +1,12 @@
+/**
+ * @file   mainwindow.cpp
+ * @author Liangfu Chen <chenclf@gmail.com>
+ * @date   Mon Jul 30 01:24:18 2012
+ * 
+ * @brief  
+ * 
+ * 
+ */
 
 #include "common.h"
 #include "mainwindow.h"
@@ -13,7 +22,13 @@ MainWindow::MainWindow(const wxString& title, const wxPoint& pos, const wxSize& 
 	: wxFrame( NULL, -1, title, pos, size ),
 	  m_bitmap(wxBitmap()),
 	  // m_glcanvas(this, wxID_ANY, wxDefaultPosition, wxDefaultSize),
-	  m_canvas(this, wxID_ANY, wxDefaultPosition, wxDefaultSize)
+	  // m_canvas(this, wxID_ANY, wxDefaultPosition, wxDefaultSize),
+	  m_mainframe(this, wxID_ANY, pos, size),
+	  m_dlgInpaint(NULL)
+	  // m_dlgInpaint(new AbstractImageEditDialog(this, wxID_ANY,
+	  // 										   wxT("Inpaint Dialog"),
+	  // 										   wxDefaultPosition,
+	  // 										   wxDefaultSize))
 {
 	wxInitAllImageHandlers();
     wxMenu *menuFile = new wxMenu;
@@ -94,8 +109,8 @@ void MainWindow::OnMenuFileOpen(wxCommandEvent & event)
 	memcpy(m_imgOriginal.data, image.GetData(), 
 		   sizeof(uchar)*image.GetWidth()*image.GetHeight()*3);
 	m_bitmap = wxBitmap(image);
-	m_canvas.loadBitmap(m_bitmap);
-	m_canvas.Refresh(false);
+	m_mainframe.loadBitmap(m_bitmap);
+	m_mainframe.Refresh(false);
 }
 
 void MainWindow::fileOpen(const wxString fn)
@@ -104,17 +119,28 @@ void MainWindow::fileOpen(const wxString fn)
 
 	wxImage image(fn);
 	m_bitmap = wxBitmap(image);
-	m_canvas.loadBitmap(m_bitmap);
-	m_canvas.Refresh(false);
+	m_mainframe.loadBitmap(m_bitmap);
+	m_mainframe.Refresh(false);
 }
 
 void MainWindow::OnMenuToolkitInpaint(wxCommandEvent& event)
 {
-	int brushsize =
-		wxGetNumberFromUser(wxT("Please assign brush size:"), wxEmptyString,
-							wxT("Set brush size"),
-							3, 1, 100, this);
-	m_canvas.SetCursor(wxCursor(wxCURSOR_PENCIL));
+	if (m_dlgInpaint==NULL){
+		m_dlgInpaint = new AbstractImageEditDialog(this, wxID_ANY,
+												   wxT("Inpaint Dialog"),
+												   wxDefaultPosition,
+												   wxDefaultSize);
+	}
+	m_dlgInpaint->loadImage(m_bitmap);
+	m_dlgInpaint->ShowModal();
+	m_dlgInpaint->loadImage(m_bitmap);
+	
+	// int brushsize =
+	// 	wxGetNumberFromUser(wxT("Please assign brush size:"), wxEmptyString,
+	// 						wxT("Set brush size"),
+	// 						3, 1, 100, this);
+	// m_canvas.SetCursor(wxCursor(wxCURSOR_PENCIL));
+
 	// NOTIFY("%d", brushsize);
 	// cv::imshow("test", m_imgOriginal);
 }

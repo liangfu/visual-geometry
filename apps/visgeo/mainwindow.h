@@ -19,6 +19,10 @@
 #include "opencv/cv.h"
 #include "opencv/highgui.h"
 
+#include "abstractimageeditdlg.h"
+#include "mainframe.h"
+#include "dlginpaint.h"
+
 enum {
 	ID_QUIT = wxID_HIGHEST+1,
 	ID_ABOUT,
@@ -30,8 +34,11 @@ class MainWindow: public wxFrame
 {
 	wxBitmap m_bitmap;
 	// TestGLCanvas m_glcanvas;
-	Canvas m_canvas;
+	// Canvas m_canvas;
+	MainFrame m_mainframe;
 	cv::Mat m_imgOriginal;
+	AbstractImageEditDialog * m_dlgInpaint;
+	
 public:
 
     MainWindow(const wxString& title, const wxPoint& pos, const wxSize& size);
