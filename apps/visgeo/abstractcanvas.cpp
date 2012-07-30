@@ -13,6 +13,7 @@
 AbstractCanvas::AbstractCanvas(wxWindow* parent, wxWindowID id,
 							   const wxPoint& pos,
 							   const wxSize& size):
+    wxWindow(parent, id, pos, size),
 	m_bitmap(wxBitmap())
 	
 {

@@ -37,7 +37,7 @@ class MainWindow: public wxFrame
 	// Canvas m_canvas;
 	MainFrame m_mainframe;
 	cv::Mat m_imgOriginal;
-	AbstractImageEditDialog * m_dlgInpaint;
+	// AbstractImageEditDialog * m_dlgInpaint;
 	
 public:
 

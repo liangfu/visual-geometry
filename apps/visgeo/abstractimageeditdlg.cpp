@@ -13,27 +13,38 @@
 AbstractImageEditDialog::
 AbstractImageEditDialog(wxWindow* parent, wxWindowID id,
 						const wxString& title,
-						const wxPoint& pos = wxDefaultPosition,
-						const wxSize& size = wxDefaultSize):
-	wxDialog( parent, id, title, pos, size ),
-	m_canvas0(new AbstractCanvas(this, wxID_ANY, pos, size))// ,
-	// m_canvas1(this, wxID_ANY, pos, size)
+						const wxPoint& pos,
+						const wxSize& size):
+	wxFrame( parent, id, title, pos, size ),
+	m_canvas0(NULL),
+	m_canvas1(NULL)
 {
-    // wxMenu *menuAbout = new wxMenu;
-    // menuAbout->Append( wxID_ANY, _("&About...") );
+  wxGridSizer * topsizer =
+      new wxGridSizer(2,2,5,5);
+  wxBoxSizer * bsizer1 =
+      new wxBoxSizer(wxHORIZONTAL);
+  wxStaticText * pButtonOK =
+      new wxStaticText( this, wxID_OK, _T("Original"));
+  bsizer1->Add(pButtonOK,
+                wxSizerFlags().Expand().Border(10).Proportion(1).Center());
+  wxStaticText * pButtonCancel =
+      new wxStaticText( this, wxID_CANCEL, _T("Modified"));
+  bsizer1->Add(pButtonCancel,
+               wxSizerFlags().Expand().Border(10).Proportion(1));
 
-    // wxMenuBar *menuBar = new wxMenuBar;
-    // menuBar->Append( menuAbout, _("&About") );
+  topsizer->Add(bsizer1);
 
-    // SetMenuBar( menuBar );
+  wxBoxSizer * bsizer2 =
+      new wxBoxSizer(wxHORIZONTAL);
+  m_canvas0 = new AbstractCanvas(this, wxID_ANY,
+                                 wxDefaultPosition, wxSize(320, 240));
+  m_canvas1 = new AbstractCanvas(this, wxID_ANY,
+                                 wxDefaultPosition, wxSize(320, 240));
+  bsizer2->Add(m_canvas0, 1, wxEXPAND | wxALL, 10);
+  bsizer2->Add(m_canvas1, 1, wxALL, 10);
 
-    new wxButton( this, wxID_OK, _T("Ok"), wxPoint(20*2,50*2), wxSize(20*2,13*2) );
-    new wxButton( this, wxID_CANCEL, _T("Cancel"), wxPoint(44*2,50*2),
-        wxSize(25*2,13*2) );
-	m_canvas0 = new AbstractCanvas(this, wxID_ANY,
-								   wxPoint(44*2,50*2),
-								   wxSize(25*2,13*2));
+  topsizer->Add(bsizer2);
 
-	// Connect(wxID_ANY, wxEVT_CLOSE,
-	// 		wxCloseEventHandler(AbstractImageEditDialog::OnClose));
+  SetSizer( topsizer );
+  topsizer->SetSizeHints( this );
 }

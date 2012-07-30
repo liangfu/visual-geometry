@@ -26,7 +26,6 @@ public:
 	void loadBitmap(const wxBitmap& bitmap){
 		m_bitmap = bitmap;
 		Refresh(false);
-		puts(__FUNCTION__);
 	}
 
 };
