@@ -17,28 +17,28 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id,
 	wxWindow(parent, id, pos, size),
 	m_bitmap(wxBitmap()),
 	// m_canvas(this, id,
-	// 				wxPoint((GetSize().GetWidth() - m_bitmap.GetWidth ())/2.,
-	// 						(GetSize().GetHeight()- m_bitmap.GetHeight())/2.),
-	// 				wxSize(m_bitmap.GetWidth (),
-	// 					   m_bitmap.GetHeight())),
+    //          wxPoint((GetSize().GetWidth() - m_bitmap.GetWidth ())/2.,
+    //                  (GetSize().GetHeight()- m_bitmap.GetHeight())/2.),
+    //          wxSize(m_bitmap.GetWidth (),
+    //                 m_bitmap.GetHeight())),
 	m_rect(wxRect(0,0,0,0))
 {
-	Connect(wxID_ANY, wxEVT_PAINT,
-			wxPaintEventHandler(MainFrame::OnPaint));
-	// Connect(wxID_ANY, wxEVT_MOTION,
-	// 		wxMouseEventHandler(MainFrame::OnMouseEvent));
+  // Connect(wxID_ANY, wxEVT_PAINT,
+  // 		wxPaintEventHandler(MainFrame::OnPaint));
+  // Connect(wxID_ANY, wxEVT_MOTION,
+  // 		wxMouseEventHandler(MainFrame::OnMouseEvent));
 }
 
-void MainFrame::OnPaint(wxPaintEvent & WXUNUSED(event))
-{
-	wxPaintDC dc(this);
-	m_rect = wxRect((GetSize().GetWidth() - m_bitmap.GetWidth ())/2.,
-					(GetSize().GetHeight()- m_bitmap.GetHeight())/2.,
-					m_bitmap.GetWidth (),
-					m_bitmap.GetHeight ());
-	dc.DrawBitmap(m_bitmap,
-				  m_rect.x, m_rect.y, 0);
-}
+// void MainFrame::OnPaint(wxPaintEvent & WXUNUSED(event))
+// {
+// 	wxPaintDC dc(this);
+// 	m_rect = wxRect((GetSize().GetWidth() - m_bitmap.GetWidth ())/2.,
+// 					(GetSize().GetHeight()- m_bitmap.GetHeight())/2.,
+// 					m_bitmap.GetWidth (),
+// 					m_bitmap.GetHeight ());
+// 	dc.DrawBitmap(m_bitmap,
+// 				  m_rect.x, m_rect.y, 0);
+// }
 
 // void MainFrame::OnMouseEvent(wxMouseEvent & event)
 // {

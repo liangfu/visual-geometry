@@ -24,32 +24,33 @@
 #include "dlginpaint.h"
 
 enum {
-	ID_QUIT = wxID_HIGHEST+1,
-	ID_ABOUT,
-	ID_INPAINT
+  ID_QUIT = wxID_HIGHEST+1,
+  ID_ABOUT,
+  ID_INPAINT
 };
 
 
 class MainWindow: public wxFrame
 {
-	wxBitmap m_bitmap;
-	// TestGLCanvas m_glcanvas;
-	// Canvas m_canvas;
-	MainFrame m_mainframe;
-	cv::Mat m_imgOriginal;
-	// AbstractImageEditDialog * m_dlgInpaint;
+  wxBitmap m_bitmap;
+  // TestGLCanvas m_glcanvas;
+  // Canvas m_canvas;
+  // MainFrame m_mainframe;
+  Canvas * m_canvas;
+  cv::Mat m_imgOriginal;
+  // AbstractImageEditDialog * m_dlgInpaint;
 	
-public:
+ public:
 
-    MainWindow(const wxString& title, const wxPoint& pos, const wxSize& size);
+  MainWindow(const wxString& title, const wxPoint& pos, const wxSize& size);
 
-	void OnMenuFileOpen(wxCommandEvent & event);
-	void fileOpen(const wxString fn);
-    void OnQuit(wxCommandEvent& event);
-    void OnAbout(wxCommandEvent& event);
-    void OnMenuToolkitInpaint(wxCommandEvent& event);
-	// void OnPaint(wxPaintEvent & event);
-    // DECLARE_EVENT_TABLE()
+  void OnMenuFileOpen(wxCommandEvent & event);
+  void fileOpen(const wxString fn);
+  void OnQuit(wxCommandEvent& event);
+  void OnAbout(wxCommandEvent& event);
+  void OnMenuToolkitInpaint(wxCommandEvent& event);
+  // void OnPaint(wxPaintEvent & event);
+  // DECLARE_EVENT_TABLE()
 };
 
 #endif //__MAIN_WINDOW_H__

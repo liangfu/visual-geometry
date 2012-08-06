@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+
+
+
+platform = ARGUMENTS.get("platform", "linux")
+debug = ARGUMENTS.get("debug", 1)
+Help("""
+type: 
+    'scons platform=win32' to build source code for win32 environment (using i586-mingw32msvc)
+    'scons platform=linux' to build source code for linux environment
+""")
+
+env = Environment()
+
+if platform == "win32":
+    # cross compile in Linux for win32
+    # include_dir = ["-I.",
+    #                "-I/usr/i586-mingw32msvc/include",
+    #                "-I/usr/local/wxWidgets-2.8.12/lib/wx/include/i586-mingw32msvc-msw-unicode-release-2.8",
+    #                "-I/usr/local/wxWidgets-2.8.12/include"]
+    include_dir = [".",
+                   "/usr/i586-mingw32msvc/include",
+                   "/usr/local/wxWidgets-2.8.12/lib/wx/include/i586-mingw32msvc-msw-unicode-release-2.8",
+                   "/usr/local/wxWidgets-2.8.12/include"]
+
+    cxxflags = ["-Wall", "-g",
+                "-D__WXMSW__", "-DWXUSINGDLL", 
+                "-DWX_PRECOMP","-mthreads","-Wall","-Wundef",
+                "-Wno-ctor-dtor-privacy","-O2","-fno-strict-aliasing"]
+
+    linkflags = ["-L/usr/local/wxWidgets-2.8.12/lib",
+                 "-mthreads",
+                 # "-lrpcrt4","-loleaut32","-lole32","-luuid","-lwinspool","-lwinmm","-lshell32",
+                 # "-lcomctl32","-lcomdlg32","-lctl3d32","-ladvapi32","-lwsock32","-lgdi32","-lrpcrt4",
+                 # "-loleaut32","-lole32","-luuid","-lwinspool","-lwinmm","-lshell32","-lcomctl32",
+                 # "-lcomdlg32","-lctl3d32","-ladvapi32","-lwsock32","-lgdi32","-lopengl32",
+                 # "-lwxzlib-2.8-i586-mingw32msvc",
+                 # "-lwxregexu-2.8-i586-mingw32msvc","-lwxexpat-2.8-i586-mingw32msvc",
+                 # "-lwx_mswu-2.8-i586-mingw32msvc",
+                 # "-lwx_mswu_gl-2.8-i586-mingw32msvc",
+                 ]
+    libs = ["rpcrt4","oleaut32","ole32","uuid","winspool","winmm","shell32",
+            "comctl32","comdlg32","ctl3d32","advapi32","wsock32","gdi32","rpcrt4",
+            "oleaut32","ole32","uuid","winspool","winmm","shell32","comctl32",
+            "comdlg32","ctl3d32","advapi32","wsock32","gdi32","opengl32",
+            "wxzlib-2.8-i586-mingw32msvc",
+            "wxregexu-2.8-i586-mingw32msvc","wxexpat-2.8-i586-mingw32msvc",
+            "wx_mswu-2.8-i586-mingw32msvc",
+            "wx_mswu_gl-2.8-i586-mingw32msvc",
+            ]
+
+    path = ['/usr/i586-mingw32msvc/bin']
+
+    # win32 = Environment()
+    env.Tool('crossmingw', toolpath='.')
+    # win32.Append(CPPFLAGS = cxxflags+include_dir)
+    env.Append(CPPFLAGS = cxxflags)
+    env.Append(CPPPATH = include_dir)
+    env.Append(LINKFLAGS = linkflags)
+    # win32.Append(INCPREFIX = include_dir)
+    env.Append(LIBS = libs)
+    env.Replace(OBJPREFIX = ".obj/win32/")
+
+    # env.Program("visgeo", source_list)
+
+elif platform == "linux":
+    env = Environment()
+    if debug==1:
+        env.Append(CPPFLAGS = "`wx-config --cxxflags` -g -Wall ")
+    elif debug==0:
+        env.Append(CPPFLAGS = "`wx-config --cxxflags` -O2 ")
+    include_dir = ["/usr/local/OpenCV-2.1.0/include/opencv",
+                   "/usr/local/include"]
+    env.Append(CPPPATH = include_dir)
+    # env.Append(CPPPATH = )
+    env.Append(LINKFLAGS = "`wx-config --libs gl,core,base,aui`")
+    env.Append(LINKFLAGS = "-L/usr/local/OpenCV-2.1.0/build-linux/lib")
+    env.Append(LINKFLAGS = "-L/usr/local/lib")
+    env.Append(LIBS = ["cxcore", "cv", "cvaux", "highgui"])
+    env.Append(RPATH = [".", "/usr/local/OpenCV-2.1.0/build-linux/lib"])
+    env.Replace(OBJPREFIX = ".obj/linux/")
+
+#######################################################
+# test project list
+
+source_list = ["propsize.cpp"]
+env.Program("propsize", source_list)
+
+source_list = ["layout.cpp"]
+env.Program("layout", source_list)
+
+source_list = ["abundleadjustment.cpp",
+               "cxts_arrtest.cpp",
+               "cxts.cpp",
+               "cxts_main.cpp", 
+               "cxts_math.cpp"]
+env.Program("bundleadjustment", source_list)
+
+

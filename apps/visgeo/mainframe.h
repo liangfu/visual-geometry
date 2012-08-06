@@ -16,20 +16,27 @@
 
 class MainFrame : public wxWindow
 {
-	wxBitmap m_bitmap;
-	// Canvas m_canvas;
-	wxRect m_rect;
-public:
-	MainFrame(wxWindow* parent, wxWindowID id,
-			  const wxPoint& pos = wxDefaultPosition,
-			  const wxSize& size = wxDefaultSize);
-	void loadBitmap(const wxBitmap& bitmap){
-		m_bitmap = bitmap;
-		// m_canvas.loadBitmap(bitmap);
-		Refresh(false);
-	}
-	void OnPaint(wxPaintEvent & event);
-	// void OnMouseEvent(wxMouseEvent & event);
+  wxBitmap m_bitmap;
+  // Canvas m_canvas;
+  wxRect m_rect;
+ public:
+  MainFrame(wxWindow* parent, wxWindowID id,
+            const wxPoint& pos = wxDefaultPosition,
+            const wxSize& size = wxDefaultSize);
+  void loadBitmap(const wxBitmap& bitmap){
+    m_bitmap = bitmap;
+    // m_canvas.loadBitmap(bitmap);
+    Canvas * canvas =
+        new Canvas(this, wxID_ANY, wxPoint(0,0),
+                   // wxPoint((GetSize().GetWidth() - m_bitmap.GetWidth ())/2.,
+                   //         (GetSize().GetHeight()- m_bitmap.GetHeight())/2.),
+                   wxSize(bitmap.GetWidth(), bitmap.GetHeight()));
+    canvas->loadBitmap(bitmap);
+    canvas->Refresh(false);
+    Refresh(false);
+  }
+  // void OnPaint(wxPaintEvent & event);
+  // void OnMouseEvent(wxMouseEvent & event);
 };
 
 
