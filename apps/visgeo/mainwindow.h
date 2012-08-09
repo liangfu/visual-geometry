@@ -19,14 +19,15 @@
 #include "opencv/cv.h"
 #include "opencv/highgui.h"
 
-#include "abstractimageeditdlg.h"
-#include "mainframe.h"
-#include "dlginpaint.h"
+// #include "abstractimageeditdlg.h"
+// #include "mainframe.h"
+// #include "dlginpaint.h"
 
 enum {
   ID_QUIT = wxID_HIGHEST+1,
   ID_ABOUT,
-  ID_INPAINT
+  ID_INPAINT,
+  ID_SETTINGS
 };
 
 
@@ -39,7 +40,8 @@ class MainWindow: public wxFrame
   Canvas * m_canvas;
   cv::Mat m_imgOriginal;
   // AbstractImageEditDialog * m_dlgInpaint;
-	
+  wxPanel* m_panel;
+  // wxSizer * m_topsizer;
  public:
 
   MainWindow(const wxString& title, const wxPoint& pos, const wxSize& size);
@@ -50,6 +52,12 @@ class MainWindow: public wxFrame
   void OnAbout(wxCommandEvent& event);
   void OnMenuToolkitInpaint(wxCommandEvent& event);
   // void OnPaint(wxPaintEvent & event);
+  void OnResize(wxSizeEvent & event){
+    // m_topsizer->RecalcSizes();
+    // m_topsizer->Layout();
+    m_panel->Refresh(false);
+    m_canvas->Refresh(false);
+  }
   // DECLARE_EVENT_TABLE()
 };
 

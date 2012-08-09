@@ -14,7 +14,8 @@
 #include "res/new.xpm"
 #include "res/open.xpm"
 #include "res/save.xpm"
-#include "res/preview.xpm"
+#include "res/inpaint.xpm"
+#include "res/settings.xpm"
 
 #include <wx/numdlg.h>
 
@@ -49,38 +50,47 @@ MainWindow::MainWindow(const wxString& title,
   wxMenuBar *menuBar = new wxMenuBar;
   menuBar->Append( menuFile, _("&File") );
   menuBar->Append( menuEdit, _("&Edit") );
-  menuBar->Append( menuToolkit, _("&Toolkit") );
+  menuBar->Append( menuToolkit, _("&Tools") );
   menuBar->Append( menuAbout, _("&About") );
 
   SetMenuBar( menuBar );
 
-
-  
   {
     wxToolBar * toolBar = CreateToolBar();
     wxBitmap bitmapNew(new_xpm);
     wxBitmap bitmapOpen(open_xpm);
     wxBitmap bitmapSave(save_xpm);
-    wxBitmap bitmapView(preview_xpm);
+    // wxBitmap bitmapView(preview_xpm);
+    wxBitmap bitmapInpaint(inpaint_xpm);
+    wxBitmap bitmapSettings(settings_xpm);
 
     toolBar->AddTool((int)wxID_NEW,  wxT("New"),  bitmapNew,  wxNullBitmap);
     toolBar->AddTool((int)wxID_OPEN, wxT("Open"), bitmapOpen, wxNullBitmap);
     toolBar->AddTool((int)wxID_SAVE, wxT("Save"), bitmapSave, wxNullBitmap);
-    toolBar->AddTool((int)wxID_PREVIEW, wxT("View"), bitmapView, wxNullBitmap);
+    toolBar->AddTool((int)ID_INPAINT, wxT("Inpaint"),
+                     bitmapInpaint, wxNullBitmap);
+    toolBar->AddTool((int)ID_SETTINGS, wxT("Settings"),
+                     bitmapSettings, wxNullBitmap);
     // SetToolBar(toolBar);
     toolBar->Realize();
   }
   {
-    wxPanel* p = new wxPanel(this, wxID_ANY);
-    wxSizer * topsizer = new wxGridSizer(1,20,20);
+    m_panel = new wxPanel(this, wxID_ANY);
+    // m_panel->
+        SetMinSize(wxSize(320, 240));
+    // m_topsizer = new wxGridSizer(1);
+    wxSizer * m_vsizer = new wxBoxSizer(wxVERTICAL);
+    wxSizer * m_hsizer = new wxBoxSizer(wxHORIZONTAL);
     m_canvas =
-        new Canvas(p, wxID_ANY, wxPoint(20,20),
-                   wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight()));
-    topsizer->Add(m_canvas,
-                  0, wxALIGN_CENTER);
-    m_canvas->loadBitmap(m_bitmap);
-    m_canvas->Refresh(false);
-    p->SetSizer(topsizer);
+        new Canvas(m_panel, wxID_ANY);
+    m_vsizer->Add(m_canvas,
+                    1,
+                    wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL // | wxEXPAND
+                    );
+    m_hsizer->Add(m_vsizer, 1,
+                  wxALIGN_CENTER | wxALIGN_CENTER_HORIZONTAL);
+    m_panel->SetSizer(m_hsizer);
+    m_panel->SetAutoLayout(true);
   }
   CreateStatusBar(1);
   SetStatusText( _("Welcome to "APPLICATION_TITLE"!"));
@@ -94,6 +104,8 @@ MainWindow::MainWindow(const wxString& title,
   Connect(ID_INPAINT, wxEVT_COMMAND_MENU_SELECTED,
           wxCommandEventHandler(MainWindow::OnMenuToolkitInpaint));
   // Connect(wxEVT_PAINT, wxPaintEventHandler(MainWindow::OnPaint));
+  // Connect(wxID_ANY, wxEVT_SIZE,
+  //         wxSizeEventHandler(MainWindow::OnResize));
 }
 
 void MainWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -117,6 +129,7 @@ void MainWindow::OnMenuFileOpen(wxCommandEvent & event)
                                wxT("All image files (*.png;*.jpg;*.bmp)|*.png;*.jpg;*.bmp|")
                                wxT("PNG files (*.png)|*.png|")
                                wxT("JPEG files (*.jpg)|*.jpg|")
+                               wxT("BMP files (*.bmp)|*.bmp|")
                                );
   if ( fn.empty() ){return;}
 
@@ -129,6 +142,8 @@ void MainWindow::OnMenuFileOpen(wxCommandEvent & event)
   // m_mainframe.loadBitmap(m_bitmap);
   // m_mainframe.Refresh(false);
   m_canvas->loadBitmap(m_bitmap);
+  // m_panel->SetMinSize(wxSize(m_bitmap.GetWidth(),m_bitmap.GetHeight()));
+  // m_topsizer->Layout();
   m_canvas->Refresh(false);
 }
 
@@ -146,22 +161,11 @@ void MainWindow::fileOpen(const wxString fn)
 
 void MainWindow::OnMenuToolkitInpaint(wxCommandEvent& event)
 {
-  AbstractImageEditDialog * m_dlgInpaint =
-      new AbstractImageEditDialog(this, wxID_ANY,
-                                  wxT("Inpaint Dialog"),
-                                  wxDefaultPosition,
-                                  wxDefaultSize);
-
-  m_dlgInpaint->loadImage(m_bitmap);
-  m_dlgInpaint->Show();
+  // AbstractImageEditDialog * m_dlgInpaint =
+  //     new AbstractImageEditDialog(this, wxID_ANY,
+  //                                 wxT("Inpaint Dialog"),
+  //                                 wxDefaultPosition,
+  //                                 wxDefaultSize);
   // m_dlgInpaint->loadImage(m_bitmap);
-	
-  // int brushsize =
-  // 	wxGetNumberFromUser(wxT("Please assign brush size:"), wxEmptyString,
-  // 						wxT("Set brush size"),
-  // 						3, 1, 100, this);
-  // m_canvas.SetCursor(wxCursor(wxCURSOR_PENCIL));
-
-  // NOTIFY("%d", brushsize);
-  // cv::imshow("test", m_imgOriginal);
+  // m_dlgInpaint->Show();
 }

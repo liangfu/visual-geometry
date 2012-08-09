@@ -13,7 +13,7 @@
 
 #include "wx/wx.h"
 
-class Canvas : public wxWindow
+class Canvas : public wxScrolledWindow//wxWindow
 {
   wxBitmap m_bitmap;
   wxRect m_rect;
@@ -23,12 +23,16 @@ class Canvas : public wxWindow
          const wxSize& size = wxDefaultSize);
   void loadBitmap(const wxBitmap& bitmap){
     m_bitmap = wxBitmap(bitmap);
+    SetMinSize(wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight()));
+    SetMaxSize(wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight()));
+    // SetSize(wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight()));
+
     // SetMinSize(wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight()));
     // SetMaxSize(wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight()));
     Refresh(false);
   }
   void OnPaint(wxPaintEvent & event);
-  // void OnMouseEvent(wxMouseEvent & event);
+  void OnMouseEvent(wxMouseEvent & event);
 };
 
 

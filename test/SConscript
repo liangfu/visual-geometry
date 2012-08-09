@@ -89,6 +89,15 @@ env.Program("propsize", source_list)
 source_list = ["layout.cpp"]
 env.Program("layout", source_list)
 
+source_list = ["event.cpp"]
+env.Program("event", source_list)
+
+
+
+
+#######################################################
+# test with OpenCV testbed
+
 source_list = ["abundleadjustment.cpp",
                "cxts_arrtest.cpp",
                "cxts.cpp",

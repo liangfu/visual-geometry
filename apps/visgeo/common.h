@@ -13,8 +13,8 @@
 
 #define APPLICATION_TITLE "Visual Geometry"
 
-#define NOTIFY(format, args...)						\
+#define notify(format, args...)						\
 	fprintf(stderr, "%s: %d: note: %s: "format"\n",	\
-			__FILE__, __LINE__, #args, args)
+			__FILE__, __LINE__, #args, ##args)
 
 #endif //__COMMON_H__
