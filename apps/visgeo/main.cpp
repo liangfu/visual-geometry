@@ -16,7 +16,6 @@ class MyApp: public wxApp
     virtual bool OnInit();
 };
 
-
 // IMPLEMENT_APP(MyApp)
 int main(int argc, char * argv[])
 {
@@ -31,16 +30,14 @@ int main(int argc, char * argv[])
 	return 0;
 }
 
-
 bool MyApp::OnInit()
 {
     MainWindow *frame = new MainWindow( _(APPLICATION_TITLE), wxPoint(50, 50),
-									  wxSize(640, 480) );
+                                        wxSize(640, 480) );
     frame->Show(true);
 	if (argc==2){
 		frame->fileOpen(wxString(argv[1]));
 	}
-    // SetTopWindow(frame);
     return true;
 }
 

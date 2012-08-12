@@ -8,6 +8,8 @@ source_list = ["main.cpp",
                # "abstractimageeditdlg.cpp",
                "canvas.cpp"
                ]
+header_list = ["canvas.h", "common.h", "glcanvas.h", 
+               "mainwindow.h", "utility.h"]
 # source_list = ["wxauitest.cpp",
 #                "manager.cpp"
 #                ]
@@ -27,7 +29,7 @@ if platform == "win32":
     #                "-I/usr/i586-mingw32msvc/include",
     #                "-I/usr/local/wxWidgets-2.8.12/lib/wx/include/i586-mingw32msvc-msw-unicode-release-2.8",
     #                "-I/usr/local/wxWidgets-2.8.12/include"]
-    include_dir = [".",
+    include_dir = [".","/usr/local/OpenCV-2.1.0/include",
                    "/usr/i586-mingw32msvc/include",
                    "/usr/local/wxWidgets-2.8.12/lib/wx/include/i586-mingw32msvc-msw-unicode-release-2.8",
                    "/usr/local/wxWidgets-2.8.12/include"]
@@ -38,7 +40,8 @@ if platform == "win32":
                 "-Wno-ctor-dtor-privacy","-O2","-fno-strict-aliasing"]
 
     linkflags = ["-L/usr/local/wxWidgets-2.8.12/lib",
-                 "-mthreads",
+                 "-L/usr/local/OpenCV-2.1.0/build-win32/lib",
+                 "-mthreads"# ,
                  # "-lrpcrt4","-loleaut32","-lole32","-luuid","-lwinspool","-lwinmm","-lshell32",
                  # "-lcomctl32","-lcomdlg32","-lctl3d32","-ladvapi32","-lwsock32","-lgdi32","-lrpcrt4",
                  # "-loleaut32","-lole32","-luuid","-lwinspool","-lwinmm","-lshell32","-lcomctl32",
@@ -56,6 +59,7 @@ if platform == "win32":
             "wxregexu-2.8-i586-mingw32msvc","wxexpat-2.8-i586-mingw32msvc",
             "wx_mswu-2.8-i586-mingw32msvc",
             "wx_mswu_gl-2.8-i586-mingw32msvc",
+            "cxcore210","cv210","cvaux210","highgui210"
             ]
 
     path = ['/usr/i586-mingw32msvc/bin']
@@ -70,7 +74,9 @@ if platform == "win32":
     win32.Append(LIBS = libs)
     win32.Replace(OBJPREFIX = ".obj/win32/")
 
-    win32.Program("visgeo", source_list)
+    win32.Program("visgeo", 
+                  source = source_list,
+                  header = header_list)
 
 elif platform == "linux":
     linux = Environment()
@@ -87,7 +93,9 @@ elif platform == "linux":
     linux.Append(RPATH = ".")
     linux.Replace(OBJPREFIX = ".obj/linux/")
 
-    linux.Program("visgeo", source_list)
+    linux.Program("visgeo", 
+                  source = source_list,
+                  header = header_list)
 
 
 

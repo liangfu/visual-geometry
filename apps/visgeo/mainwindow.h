@@ -33,31 +33,41 @@ enum {
 
 class MainWindow: public wxFrame
 {
+  wxMenuBar * m_menuBar;
+  wxToolBar * m_toolBar;
   wxBitmap m_bitmap;
-  // TestGLCanvas m_glcanvas;
-  // Canvas m_canvas;
-  // MainFrame m_mainframe;
   Canvas * m_canvas;
+
   cv::Mat m_imgOriginal;
-  // AbstractImageEditDialog * m_dlgInpaint;
+  wxImage m_image;
+  wxImage m_imgResized;
+
   wxPanel* m_panel;
-  // wxSizer * m_topsizer;
- public:
+  wxSizer * m_hsizer;
 
-  MainWindow(const wxString& title, const wxPoint& pos, const wxSize& size);
+  void initMenuBar();
+  void initToolBars();
+  void initMainPanel();
+  void initEvents();
 
+ protected:
+  void OnMouseWheel(wxMouseEvent& event);
   void OnMenuFileOpen(wxCommandEvent & event);
-  void fileOpen(const wxString fn);
+  
   void OnQuit(wxCommandEvent& event);
   void OnAbout(wxCommandEvent& event);
   void OnMenuToolkitInpaint(wxCommandEvent& event);
-  // void OnPaint(wxPaintEvent & event);
-  void OnResize(wxSizeEvent & event){
-    // m_topsizer->RecalcSizes();
-    // m_topsizer->Layout();
+  void OnResize(wxSizeEvent & event)
+  {
     m_panel->Refresh(false);
     m_canvas->Refresh(false);
   }
+  
+ public:
+
+  MainWindow(const wxString& title, const wxPoint& pos, const wxSize& size);
+  void fileOpen(const wxString fn);
+  // void OnPaint(wxPaintEvent & event);
   // DECLARE_EVENT_TABLE()
 };
 
