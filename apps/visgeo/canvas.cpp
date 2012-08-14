@@ -18,14 +18,18 @@ Canvas::Canvas(wxWindow* parent, wxWindowID id,
 	m_bitmap(wxBitmap()),// ,
 	// m_rect(wxRect(0,0,0,0))
     m_fZoomFactor(0.0f),
-    m_hsizer(NULL)
+    m_hsizer(NULL),
+    m_imgOriginal(NULL),
+    m_imgModifier(NULL)
 {
   // SetMinSize(wxSize(1,1));
   // SetMinSize(wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight()));
   // SetMaxSize(wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight()));
   Connect(wxID_ANY, wxEVT_PAINT, wxPaintEventHandler(Canvas::OnPaint));
   Connect(wxID_ANY, wxEVT_MOTION,
-          wxMouseEventHandler(Canvas::OnMouseEvent));
+          wxMouseEventHandler(Canvas::OnMouseMotion));
+  Connect(wxID_ANY, wxEVT_LEFT_UP,
+          wxMouseEventHandler(Canvas::OnMouseRelease));
   Connect(wxID_ANY, wxEVT_MOUSEWHEEL,
           wxMouseEventHandler(Canvas::OnMouseWheel));
 }
@@ -39,7 +43,20 @@ void Canvas::OnPaint(wxPaintEvent & WXUNUSED(event))
   dc.DrawBitmap(m_bitmap,0,0,0);
 }
 
-void Canvas::OnMouseEvent(wxMouseEvent & event)
+void Canvas::OnMouseRelease(wxMouseEvent & event)
+{
+  m_imgModified.push_back(cvCloneImage(m_imgOriginal));
+  cvInpaint(m_imgOriginal, m_imgModifier, m_imgModified.back(),
+            3, CV_INPAINT_NS);
+  sfmShow(m_imgModified.back());
+  // m_bitmap = wxBitmap(wxImage(m_imgModified.back()->width,
+  //                             m_imgModified.back()->height,
+  //                             m_imgModified.back()->imageData));
+  // Refresh(false);
+  event.Skip();
+}
+
+void Canvas::OnMouseMotion(wxMouseEvent & event)
 {
   // For drawing lines in a canvas
   static long xpos = -1;
@@ -54,7 +71,12 @@ void Canvas::OnMouseEvent(wxMouseEvent & event)
   if (xpos > -1 && ypos > -1 && event.Dragging())
   {
     dc.SetPen(*wxRED_PEN);
-    dc.DrawLine(xpos, ypos, pt.x, pt.y);
+    //dc.DrawLine(xpos, ypos, pt.x, pt.y);
+    cvLine(m_imgModifier,
+           cvPoint(xpos/(m_fZoomFactor+1.0f), ypos/(m_fZoomFactor+1.0f)),
+           cvPoint(pt.x/(m_fZoomFactor+1.0f), pt.y/(m_fZoomFactor+1.0f)),
+           cvScalar(255,255,255), 5);
+    sfmShow(m_imgModifier);
   }
 
   xpos = pt.x;
@@ -74,11 +96,13 @@ void Canvas::OnMouseWheel(wxMouseEvent& event)
       imgResized.GetHeight()>0xfff || imgResized.GetWidth()>0xfff){
     return; } // maximum resolution (4095x4095) 16,769,025 
   m_bitmap = wxBitmap(imgResized);
-  notify("%d, %d", m_bitmap.GetWidth(), m_bitmap.GetHeight());
+  // notify("%d, %d", m_bitmap.GetWidth(), m_bitmap.GetHeight());
 
   SetMinSize(wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight()));
   SetMaxSize(wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight()));
   //  GetSizer()->Layout();
   m_hsizer->Layout();
   Refresh(false);
+
+  event.Skip();
 }

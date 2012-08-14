@@ -151,7 +151,12 @@ void MainWindow::OnMenuFileOpen(wxCommandEvent & event)
 void MainWindow::fileOpen(const wxString fn)
 {
   if ( fn.empty() ){return;}
-  m_image.LoadFile(fn);
+  if (!m_image.LoadFile(fn)) {
+    // wxMessageDialog msgdlg(this, wxT("Fail to load image file!"),
+    //                        wxT("ERROR"));
+    // msgdlg.ShowModal();
+    return;
+  }
   m_imgResized = m_image;
   m_imgOriginal = cv::Mat::Mat(m_image.GetHeight(), m_image.GetWidth(),
                                CV_8UC3);
@@ -175,16 +180,16 @@ void MainWindow::OnMenuToolkitInpaint(wxCommandEvent& event)
   // m_dlgInpaint->Show();
 }
 
-void MainWindow::OnMouseWheel(wxMouseEvent& event)
-{
-  //notify("%d", event.GetWheelRotation()/event.GetWheelDelta());
-  static float factor = 0.f;
-  factor += event.GetWheelRotation()/event.GetWheelDelta()*0.05f;
-  m_imgResized = m_image.Scale(m_image.GetWidth() *(1.f+factor),
-                               m_image.GetHeight()*(1.f+factor));
-  m_bitmap = wxBitmap(m_imgResized);
-  notify("%d, %d", m_bitmap.GetWidth(), m_bitmap.GetHeight());
-  m_canvas->loadBitmap(m_bitmap);
-  m_hsizer->Layout();
-  m_canvas->Refresh(false);
-}
+// void MainWindow::OnMouseWheel(wxMouseEvent& event)
+// {
+//   //notify("%d", event.GetWheelRotation()/event.GetWheelDelta());
+//   static float factor = 0.f;
+//   factor += event.GetWheelRotation()/event.GetWheelDelta()*0.05f;
+//   m_imgResized = m_image.Scale(m_image.GetWidth() *(1.f+factor),
+//                                m_image.GetHeight()*(1.f+factor));
+//   m_bitmap = wxBitmap(m_imgResized);
+//   notify("%d, %d", m_bitmap.GetWidth(), m_bitmap.GetHeight());
+//   m_canvas->loadBitmap(m_bitmap);
+//   m_hsizer->Layout();
+//   m_canvas->Refresh(false);
+// }
