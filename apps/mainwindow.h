@@ -53,6 +53,8 @@ class MainWindow: public wxFrame
  protected:
   // void OnMouseWheel(wxMouseEvent& event);
   void OnMenuFileOpen(wxCommandEvent & event);
+  void OnMenuFileSave(wxCommandEvent & event);
+  void OnMenuFileSaveAs(wxCommandEvent & event);
   
   void OnQuit(wxCommandEvent& event);
   void OnAbout(wxCommandEvent& event);

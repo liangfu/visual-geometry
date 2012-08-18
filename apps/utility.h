@@ -16,7 +16,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#define sfmShow(im)                               \
+#define vgShow(im)                              \
   cvShowImage((#im), (im))
 
 /** 
@@ -24,7 +24,7 @@
  * 
  * @param im IN:OUT: image to be released
  */
-inline void sfmReleaseImage(IplImage *& im)
+inline void vgReleaseImage(IplImage *& im)
 {
   if (im!=NULL){ cvReleaseImage(&im); im = NULL; }
 }
@@ -35,24 +35,38 @@ inline void sfmReleaseImage(IplImage *& im)
  * @param cvimage IN: IplImage to be converted
  * @param wximage OUT: wxImage output 
  */
-inline void vgCvImage2WxImage(const IplImage * cvimage, wxImage & wximage)
+inline wxImage vgCvImage2WxImage(const IplImage * cvimage)
 {
+  wxImage wximage;
+  IplImage * rgb = cvCreateImage(cvGetSize(cvimage), IPL_DEPTH_8U, 3);
+  cvCvtColor(cvimage, rgb, CV_BGR2RGB);//sfmShow(rgb);
+  wximage = wxImage(rgb->width, rgb->height, (uchar*)rgb->imageData,1);
+  vgReleaseImage(rgb);
+  return wximage;
+}
+
+inline void vgCvImage2WxImage(const IplImage * const cvimage,
+                              wxImage & wximage)
+{
+  assert(cvimage->nChannels==3);
+  assert(cvimage->depth==8);
   IplImage * rgb = cvCreateImage(cvGetSize(cvimage), IPL_DEPTH_8U, 3);
   cvCvtColor(cvimage, rgb, CV_BGR2RGB);
-  wximage = wxImage(rgb->width, rgb->height, rgb->imageData);
-  sfmReleaseImage(rgb);
+  wximage = wxImage(rgb->width, rgb->height,
+                    (unsigned char *)rgb->imageData,1);
+  vgReleaseImage(rgb);
 }
 
 inline void vgWxImage2CvImage(const wxImage wximage, IplImage *& cvimage)
 {
-  if (cvimage==NULL){
-    cvimage = cvCreateImage(cvSize(wximage.GetWidth(), wximage.GetHeight()),
-                            IPL_DEPTH_8U, 3);
-  }
+  vgReleaseImage(cvimage);
+  cvimage = cvCreateImage(cvSize(wximage.GetWidth(), wximage.GetHeight()),
+                          IPL_DEPTH_8U, 3);
+
   // wxImage returns RGBRGBRGB... format
   memcpy(cvimage->imageData, wximage.GetData(), 
          sizeof(uchar)*wximage.GetWidth()*wximage.GetHeight()*3);
-  cvCvtColor(cvimage, cvimage, CV_RGB2BGR);
+  cvCvtColor(cvimage, cvimage, CV_RGB2BGR);//vgShow(cvimage);
 }
 
 // inline void vgCvImage2WxImage(const cv::Mat cvimage, wxImage & wximage)

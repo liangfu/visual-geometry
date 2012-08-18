@@ -46,6 +46,8 @@ void MainWindow::initMenuBar()
 {
   wxMenu *menuFile = new wxMenu;
   menuFile->Append( wxID_OPEN, _("&Open\tCtrl-O") );
+  menuFile->Append( wxID_SAVE, _("&Save\tCtrl-S") );
+  menuFile->Append( wxID_SAVE, _("&Save As\tCtrl-Shift-S") );
   menuFile->AppendSeparator();
   menuFile->Append( ID_QUIT, _("&Exit\tCtrl-Q") );
 
@@ -110,6 +112,8 @@ void MainWindow::initEvents()
 {
   Connect(wxID_OPEN, wxEVT_COMMAND_MENU_SELECTED,
           wxCommandEventHandler(MainWindow::OnMenuFileOpen));
+  Connect(wxID_SAVE, wxEVT_COMMAND_MENU_SELECTED,
+          wxCommandEventHandler(MainWindow::OnMenuFileSave));
   Connect(ID_QUIT, wxEVT_COMMAND_MENU_SELECTED,
           wxCommandEventHandler(MainWindow::OnQuit));
   Connect(ID_ABOUT, wxEVT_COMMAND_MENU_SELECTED,
@@ -139,12 +143,34 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::OnMenuFileOpen(wxCommandEvent & event)
 {
-  wxString fn = wxFileSelector(_T("Choose a file"),
-                               wxEmptyString, wxEmptyString,
-                               (const wxChar*)NULL,
-                               wxT("Image files (*.png;*.jpg;*.bmp)|*.png;*.jpg;*.bmp|")
-                               wxT("Video files (*.mp4;*.avi)|*.mp4;*.avi|")
-                               );
+  wxString fn =
+      wxFileSelector(_T("Choose a file"),
+                     wxEmptyString, wxEmptyString,
+                     (const wxChar*)NULL,
+                     wxT("Image files (*.png;*.jpg;*.bmp)|*.png;*.jpg;*.bmp|")
+                     wxT("Video files (*.mp4;*.avi)|*.mp4;*.avi|"));
+  fileOpen(fn);
+}
+
+void MainWindow::OnMenuFileSave(wxCommandEvent & event)
+{
+  wxString fn =
+      wxFileSelector(_T("Choose a file"),
+                     wxEmptyString, wxEmptyString,
+                     (const wxChar*)NULL,
+                     wxT("Image files (*.png;*.jpg;*.bmp)|*.png;*.jpg;*.bmp|")
+                     wxT("Video files (*.mp4;*.avi)|*.mp4;*.avi|"));
+  fileOpen(fn);
+}
+
+void MainWindow::OnMenuFileSaveAs(wxCommandEvent & event)
+{
+  wxString fn =
+      wxFileSelector(_T("Choose a file"),
+                     wxEmptyString, wxEmptyString,
+                     (const wxChar*)NULL,
+                     wxT("Image files (*.png;*.jpg;*.bmp)|*.png;*.jpg;*.bmp|")
+                     wxT("Video files (*.mp4;*.avi)|*.mp4;*.avi|"));
   fileOpen(fn);
 }
 

@@ -13,9 +13,9 @@
 Canvas::Canvas(wxWindow* parent, wxWindowID id,
 			   const wxPoint& pos,
 			   const wxSize& size):
-	wxScrolledWindow// wxWindow
+	wxScrolledWindow
     (parent, id, pos, size),
-	m_bitmap(wxBitmap()),// ,
+	m_bitmap(wxBitmap()),
 	// m_rect(wxRect(0,0,0,0))
     m_fZoomFactor(0.0f),
     m_hsizer(NULL),
@@ -37,9 +37,6 @@ Canvas::Canvas(wxWindow* parent, wxWindowID id,
 void Canvas::OnPaint(wxPaintEvent & WXUNUSED(event))
 {
   wxPaintDC dc(this);
-  // m_rect = wxRect(0,0,
-  //                 m_bitmap.GetWidth (),
-  //                 m_bitmap.GetHeight ());
   dc.DrawBitmap(m_bitmap,0,0,0);
 }
 
@@ -48,11 +45,16 @@ void Canvas::OnMouseRelease(wxMouseEvent & event)
   m_imgModified.push_back(cvCloneImage(m_imgOriginal));
   cvInpaint(m_imgOriginal, m_imgModifier, m_imgModified.back(),
             3, CV_INPAINT_NS);
-  sfmShow(m_imgModified.back());
-  // m_bitmap = wxBitmap(wxImage(m_imgModified.back()->width,
-  //                             m_imgModified.back()->height,
-  //                             m_imgModified.back()->imageData));
-  // Refresh(false);
+  wxImage modified;// = vgCvImage2WxImage(m_imgModified.back());
+  vgCvImage2WxImage(m_imgModified.back(), modified);
+  IplImage * modified2 = NULL;
+  vgWxImage2CvImage(modified, modified2);
+  vgShow(modified2);cvWaitKey();
+  
+  m_bitmap = wxBitmap(modified);
+  
+  // m_image = m_bitmap.ConvertToImage();
+  Refresh(false);
   event.Skip();
 }
 
@@ -76,7 +78,7 @@ void Canvas::OnMouseMotion(wxMouseEvent & event)
            cvPoint(xpos/(m_fZoomFactor+1.0f), ypos/(m_fZoomFactor+1.0f)),
            cvPoint(pt.x/(m_fZoomFactor+1.0f), pt.y/(m_fZoomFactor+1.0f)),
            cvScalar(255,255,255), 5);
-    sfmShow(m_imgModifier);
+    vgShow(m_imgModifier);
   }
 
   xpos = pt.x;
@@ -93,8 +95,10 @@ void Canvas::OnMouseWheel(wxMouseEvent& event)
   wxImage imgResized = m_image.Scale(m_image.GetWidth() *(1.f+m_fZoomFactor),
                                      m_image.GetHeight()*(1.f+m_fZoomFactor));
   if (imgResized.GetHeight()<0x00f || imgResized.GetWidth()<0x00f ||
-      imgResized.GetHeight()>0xfff || imgResized.GetWidth()>0xfff){
-    return; } // maximum resolution (4095x4095) 16,769,025 
+      imgResized.GetHeight()>0xfff || imgResized.GetWidth()>0xfff)
+  {
+    return;
+  } // maximum resolution (4095x4095) 16,769,025 
   m_bitmap = wxBitmap(imgResized);
   // notify("%d, %d", m_bitmap.GetWidth(), m_bitmap.GetHeight());
 

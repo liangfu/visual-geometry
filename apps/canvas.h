@@ -37,8 +37,8 @@ class Canvas : public wxScrolledWindow//wxWindow
          const wxSize& size = wxDefaultSize);
   ~Canvas()
   {
-    sfmReleaseImage(m_imgOriginal);
-    sfmReleaseImage(m_imgModifier);
+    vgReleaseImage(m_imgOriginal);
+    vgReleaseImage(m_imgModifier);
   }
   void loadBitmap(const wxBitmap& bitmap)
   {
@@ -46,7 +46,7 @@ class Canvas : public wxScrolledWindow//wxWindow
     m_image = bitmap.ConvertToImage();
     vgWxImage2CvImage(m_image, m_imgOriginal);
     {
-      if (m_imgModifier!=NULL){ sfmReleaseImage(m_imgModifier);}
+      if (m_imgModifier!=NULL){ vgReleaseImage(m_imgModifier);}
       m_imgModifier =
           cvCreateImage(cvGetSize(m_imgOriginal), IPL_DEPTH_8U, 1);
       cvZero(m_imgModifier);
