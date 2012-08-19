@@ -20,8 +20,8 @@
 
 class Canvas : public wxScrolledWindow//wxWindow
 {
-  wxBitmap m_bitmap;        // image to be displayed on canvas
-  wxImage m_image;          // the original image 
+  wxBitmap m_bitmap;        // image to be displayed on canvas (unresized)
+  wxImage m_image;          // the original image
 
   float m_fZoomFactor;
   wxSizer * m_hsizer;       // the horizontal sizer (used in main panel)

@@ -13,6 +13,7 @@
 
 
 #include "wx/wx.h"
+#include "wx/aui/aui.h"
 #include "glcanvas.h"
 #include "canvas.h"
 
@@ -33,6 +34,8 @@ enum {
 
 class MainWindow: public wxFrame
 {
+  wxAuiManager m_mgr;
+  
   wxMenuBar * m_menuBar;
   wxToolBar * m_toolBar;
   wxBitmap m_bitmap;
@@ -68,9 +71,11 @@ class MainWindow: public wxFrame
  public:
 
   MainWindow(const wxString& title, const wxPoint& pos, const wxSize& size);
+  ~MainWindow()
+  {
+    m_mgr.UnInit();
+  }
   void fileOpen(const wxString fn);
-  // void OnPaint(wxPaintEvent & event);
-  // DECLARE_EVENT_TABLE()
 };
 
 #endif //__MAIN_WINDOW_H__

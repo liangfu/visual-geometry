@@ -18,6 +18,8 @@
 #include "res/settings.xpm"
 
 #include <wx/numdlg.h>
+#include <wx/spinctrl.h>
+#include <wx/bmpbuttn.h>
 
 MainWindow::MainWindow(const wxString& title,
                        const wxPoint& pos,
@@ -28,6 +30,7 @@ MainWindow::MainWindow(const wxString& title,
 	  m_bitmap(wxBitmap()),
       m_hsizer(NULL)
 {
+  m_mgr.SetManagedWindow(this);
   wxInitAllImageHandlers();
   initMenuBar();
 
@@ -35,11 +38,32 @@ MainWindow::MainWindow(const wxString& title,
 
   initToolBars();
   initMainPanel();
-
+  {
+    wxPanel * p = new wxPanel(this, wxID_ANY);
+    wxBitmapButton * btnInpaint =
+        new wxBitmapButton(p,wxID_ANY, wxBitmap(inpaint_xpm),
+                           wxDefaultPosition, wxDefaultSize);
+    wxSpinCtrl * scThreshold =
+        new wxSpinCtrl(p, wxID_ANY, wxT("threshold"));
+    scThreshold->SetValue(5);
+    scThreshold->SetRange(1,100);
+    wxBoxSizer * vsizer = new wxBoxSizer(wxVERTICAL);
+    vsizer->Add(btnInpaint, 0,
+                wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxEXPAND
+                );
+    vsizer->Add(scThreshold, 0,
+                wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxEXPAND
+                );
+    p->SetSizer(vsizer);
+    p->SetSize(wxSize(200,150));
+    m_mgr.AddPane(p, wxRIGHT, wxT("Pane Number One"));
+  }
+  
   CreateStatusBar(1);
   SetStatusText( _("Welcome to "APPLICATION_TITLE"!"));
 
   initEvents();
+  m_mgr.Update();
 }
 
 void MainWindow::initMenuBar()
@@ -72,19 +96,21 @@ void MainWindow::initMainPanel()
   // m_panel->
   SetMinSize(wxSize(320, 240));
   // m_topsizer = new wxGridSizer(1);
-  wxSizer * m_vsizer = new wxBoxSizer(wxVERTICAL);
+  wxSizer * vsizer = new wxBoxSizer(wxVERTICAL);
   m_hsizer = new wxBoxSizer(wxHORIZONTAL);
   m_canvas =
       new Canvas(m_panel, wxID_ANY);
-  m_vsizer->Add(m_canvas, 1,
-                wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL // | wxEXPAND
-                );
-  m_hsizer->Add(m_vsizer, 1,
+  vsizer->Add(m_canvas, 1,
+              wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL // | wxEXPAND
+              );
+  m_hsizer->Add(vsizer, 1,
                 wxALIGN_CENTER | wxALIGN_CENTER_HORIZONTAL);
   m_hsizer->SetMinSize(wxSize(320,240));
   m_canvas->SetParentSizerPtr(m_hsizer);
   m_panel->SetSizer(m_hsizer);
   m_panel->SetAutoLayout(true);
+
+  m_mgr.AddPane(m_panel, wxCENTER);
 }
 
 void MainWindow::initToolBars()

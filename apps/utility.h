@@ -35,16 +35,6 @@ inline void vgReleaseImage(IplImage *& im)
  * @param cvimage IN: IplImage to be converted
  * @param wximage OUT: wxImage output 
  */
-inline wxImage vgCvImage2WxImage(const IplImage * cvimage)
-{
-  wxImage wximage;
-  IplImage * rgb = cvCreateImage(cvGetSize(cvimage), IPL_DEPTH_8U, 3);
-  cvCvtColor(cvimage, rgb, CV_BGR2RGB);//sfmShow(rgb);
-  wximage = wxImage(rgb->width, rgb->height, (uchar*)rgb->imageData,1);
-  vgReleaseImage(rgb);
-  return wximage;
-}
-
 inline void vgCvImage2WxImage(const IplImage * const cvimage,
                               wxImage & wximage)
 {
@@ -52,8 +42,14 @@ inline void vgCvImage2WxImage(const IplImage * const cvimage,
   assert(cvimage->depth==8);
   IplImage * rgb = cvCreateImage(cvGetSize(cvimage), IPL_DEPTH_8U, 3);
   cvCvtColor(cvimage, rgb, CV_BGR2RGB);
-  wximage = wxImage(rgb->width, rgb->height,
-                    (unsigned char *)rgb->imageData,1);
+
+  unsigned char * pImgData =
+      (unsigned char*)malloc(sizeof(unsigned char)*rgb->width*rgb->height*3);
+  memcpy(pImgData, rgb->imageData,
+         sizeof(unsigned char)*rgb->width*rgb->height*3);
+  wximage = wxImage(rgb->width, rgb->height, (unsigned char*)pImgData, false);
+  // free(pImgData); // WE DO NOT HAVE TO RELEASE MEMORY HERE -------> ^^^^^
+  // wxWidget will automatically release the memory for us
   vgReleaseImage(rgb);
 }
 
@@ -62,11 +58,12 @@ inline void vgWxImage2CvImage(const wxImage wximage, IplImage *& cvimage)
   vgReleaseImage(cvimage);
   cvimage = cvCreateImage(cvSize(wximage.GetWidth(), wximage.GetHeight()),
                           IPL_DEPTH_8U, 3);
-
+  IplImage * imgTemp =
+      cvCreateImage(cvGetSize(cvimage), IPL_DEPTH_8U, 3);
   // wxImage returns RGBRGBRGB... format
-  memcpy(cvimage->imageData, wximage.GetData(), 
+  memcpy(imgTemp->imageData, wximage.GetData(), 
          sizeof(uchar)*wximage.GetWidth()*wximage.GetHeight()*3);
-  cvCvtColor(cvimage, cvimage, CV_RGB2BGR);//vgShow(cvimage);
+  cvCvtColor(imgTemp, cvimage, CV_RGB2BGR);//vgShow(cvimage);
 }
 
 // inline void vgCvImage2WxImage(const cv::Mat cvimage, wxImage & wximage)
