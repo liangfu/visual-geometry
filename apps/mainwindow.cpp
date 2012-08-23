@@ -51,16 +51,20 @@ MainWindow::MainWindow(const wxString& title,
     vsizer->Add(btnInpaint, 0,
                 wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxEXPAND
                 );
-    vsizer->Add(scThreshold, 0,
-                wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxEXPAND
-                );
+    // vsizer->Add(scThreshold, 0,
+    //             wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxEXPAND
+    //             );
     p->SetSizer(vsizer);
     p->SetSize(wxSize(200,150));
-    m_mgr.AddPane(p, wxRIGHT, wxT("Pane Number One"));
+    m_mgr.AddPane(p, wxRIGHT, wxT("Manipulations Panel"));
   }
   
-  CreateStatusBar(1);
-  SetStatusText( _("Welcome to "APPLICATION_TITLE"!"));
+  {
+    CreateStatusBar(2);
+    int statusbarwidths[2] = {-1, 120};
+    SetStatusWidths(2, statusbarwidths);
+    SetStatusText( _("Welcome to "APPLICATION_TITLE"!"), 0);
+  }
 
   initEvents();
   m_mgr.Update();
@@ -71,7 +75,7 @@ void MainWindow::initMenuBar()
   wxMenu *menuFile = new wxMenu;
   menuFile->Append( wxID_OPEN, _("&Open\tCtrl-O") );
   menuFile->Append( wxID_SAVE, _("&Save\tCtrl-S") );
-  menuFile->Append( wxID_SAVE, _("&Save As\tCtrl-Shift-S") );
+  menuFile->Append( wxID_SAVEAS, _("&Save As\tCtrl-Shift-S") );
   menuFile->AppendSeparator();
   menuFile->Append( ID_QUIT, _("&Exit\tCtrl-Q") );
 
@@ -95,6 +99,7 @@ void MainWindow::initMainPanel()
   m_panel = new wxPanel(this, wxID_ANY);
   // m_panel->
   SetMinSize(wxSize(320, 240));
+
   // m_topsizer = new wxGridSizer(1);
   wxSizer * vsizer = new wxBoxSizer(wxVERTICAL);
   m_hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -105,7 +110,7 @@ void MainWindow::initMainPanel()
               );
   m_hsizer->Add(vsizer, 1,
                 wxALIGN_CENTER | wxALIGN_CENTER_HORIZONTAL);
-  m_hsizer->SetMinSize(wxSize(320,240));
+  // m_hsizer->SetMinSize(wxSize(320,240));
   m_canvas->SetParentSizerPtr(m_hsizer);
   m_panel->SetSizer(m_hsizer);
   m_panel->SetAutoLayout(true);
@@ -140,6 +145,8 @@ void MainWindow::initEvents()
           wxCommandEventHandler(MainWindow::OnMenuFileOpen));
   Connect(wxID_SAVE, wxEVT_COMMAND_MENU_SELECTED,
           wxCommandEventHandler(MainWindow::OnMenuFileSave));
+  Connect(wxID_SAVEAS, wxEVT_COMMAND_MENU_SELECTED,
+          wxCommandEventHandler(MainWindow::OnMenuFileSaveAs));
   Connect(ID_QUIT, wxEVT_COMMAND_MENU_SELECTED,
           wxCommandEventHandler(MainWindow::OnQuit));
   Connect(ID_ABOUT, wxEVT_COMMAND_MENU_SELECTED,
@@ -169,35 +176,47 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::OnMenuFileOpen(wxCommandEvent & event)
 {
-  wxString fn =
-      wxFileSelector(_T("Choose a file"),
-                     wxEmptyString, wxEmptyString,
-                     (const wxChar*)NULL,
-                     wxT("Image files (*.png;*.jpg;*.bmp)|*.png;*.jpg;*.bmp|")
-                     wxT("Video files (*.mp4;*.avi)|*.mp4;*.avi|"));
-  fileOpen(fn);
+  wxFileDialog * dlgOpenDialog =
+      new wxFileDialog(this, wxT("Choose a file"),
+                       wxEmptyString, wxEmptyString,
+                       wxT("Image files (*.png;*.jpg;*.bmp)|"
+                           "*.png;*.jpg;*.bmp|"
+                           "Video files (*.mp4;*.avi)|*.mp4;*.avi|"));
+
+  if (dlgOpenDialog->ShowModal() == wxID_OK)
+  {
+    m_strCurrentPath = dlgOpenDialog->GetPath();
+    m_strFilename = dlgOpenDialog->GetPath();
+
+    fileOpen(m_strCurrentPath);
+    SetTitle(wxString(wxT("Edit - ")) << dlgOpenDialog->GetFilename()); 
+  }
+  dlgOpenDialog->Destroy();
 }
 
 void MainWindow::OnMenuFileSave(wxCommandEvent & event)
 {
-  wxString fn =
-      wxFileSelector(_T("Choose a file"),
-                     wxEmptyString, wxEmptyString,
-                     (const wxChar*)NULL,
-                     wxT("Image files (*.png;*.jpg;*.bmp)|*.png;*.jpg;*.bmp|")
-                     wxT("Video files (*.mp4;*.avi)|*.mp4;*.avi|"));
-  fileOpen(fn);
+  m_canvas->GetImage().ConvertToImage().SaveFile(m_strCurrentPath);
+  SetTitle(wxString(wxT("Edit - ")) << m_strFilename);
 }
 
 void MainWindow::OnMenuFileSaveAs(wxCommandEvent & event)
 {
-  wxString fn =
-      wxFileSelector(_T("Choose a file"),
-                     wxEmptyString, wxEmptyString,
-                     (const wxChar*)NULL,
-                     wxT("Image files (*.png;*.jpg;*.bmp)|*.png;*.jpg;*.bmp|")
-                     wxT("Video files (*.mp4;*.avi)|*.mp4;*.avi|"));
-  fileOpen(fn);
+  wxFileDialog * dlgSaveDialog = new wxFileDialog(
+      this, _("Save File As _?"), wxEmptyString, wxEmptyString,
+      _("PNG files (*.png)|*.png|"
+        "JPEG files (*.jpg)|*.jpg|"
+        "Bitmap files (*.bmp)|*.bmp|"),
+      wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition);
+
+  if (dlgSaveDialog->ShowModal() == wxID_OK)
+  {
+    m_strCurrentPath = dlgSaveDialog->GetPath();
+    m_canvas->GetImage().ConvertToImage().SaveFile(m_strCurrentPath); 
+    SetTitle(wxString(wxT("Edit - ")) << dlgSaveDialog->GetFilename());
+  }
+
+  dlgSaveDialog->Destroy();
 }
 
 void MainWindow::fileOpen(const wxString fn)
@@ -209,6 +228,7 @@ void MainWindow::fileOpen(const wxString fn)
     // msgdlg.ShowModal();
     return;
   }
+  m_strFilename = fn;
   m_imgResized = m_image;
   m_imgOriginal = cv::Mat::Mat(m_image.GetHeight(), m_image.GetWidth(),
                                CV_8UC3);

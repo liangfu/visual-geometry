@@ -60,6 +60,8 @@ class Canvas : public wxScrolledWindow//wxWindow
   void OnMouseMotion(wxMouseEvent & event);
   void OnMouseRelease(wxMouseEvent & event);
   //void GetSize()
+
+  wxBitmap GetImage(){return m_bitmap;}
 };
 
 

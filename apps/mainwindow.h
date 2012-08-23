@@ -48,6 +48,9 @@ class MainWindow: public wxFrame
   wxPanel* m_panel;
   wxSizer * m_hsizer;
 
+  wxString m_strFilename;
+  wxString m_strCurrentPath;
+  
   void initMenuBar();
   void initToolBars();
   void initMainPanel();
