@@ -92,8 +92,8 @@ env.Program("layout", source_list)
 source_list = ["event.cpp"]
 env.Program("event", source_list)
 
-
-
+source_list = ["fish.cpp"]
+env.Program("fish", source_list)
 
 #######################################################
 # test with OpenCV testbed

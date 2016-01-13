@@ -39,32 +39,36 @@ MainWindow::MainWindow(const wxString& title,
   initToolBars();
   initMainPanel();
   {
-    wxPanel * p = new wxPanel(this, wxID_ANY);
-    wxBitmapButton * btnInpaint =
-        new wxBitmapButton(p,wxID_ANY, wxBitmap(inpaint_xpm),
-                           wxDefaultPosition, wxDefaultSize);
-    wxSpinCtrl * scThreshold =
-        new wxSpinCtrl(p, wxID_ANY, wxT("threshold"));
-    scThreshold->SetValue(5);
-    scThreshold->SetRange(1,100);
+    wxPanel * pnSettings = new wxPanel(this, wxID_ANY);
+    wxPanel * p = pnSettings;
+    wxButton * btnInpaint =
+        new wxButton(p, wxID_ANY, wxT("Inpaint"), // wxBitmap(inpaint_xpm),
+                     wxDefaultPosition, wxDefaultSize);
     wxBoxSizer * vsizer = new wxBoxSizer(wxVERTICAL);
     vsizer->Add(btnInpaint, 0,
                 wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxEXPAND
                 );
-    // vsizer->Add(scThreshold, 0,
-    //             wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxEXPAND
-    //             );
     p->SetSizer(vsizer);
     p->SetSize(wxSize(200,150));
+    //if (0)
+    {
+      wxPanel * pInpaint = new wxPanel(this, wxID_ANY);
+      wxSpinCtrl * scThreshold =
+          new wxSpinCtrl(pInpaint, wxID_ANY, wxT("threshold"));
+      scThreshold->SetValue(5);
+      scThreshold->SetRange(1,100);
+
+      wxBoxSizer * pInpaintSizer = new wxBoxSizer(wxVERTICAL);
+      pInpaintSizer->Add(scThreshold, 0,
+                         wxALIGN_CENTER|wxALIGN_CENTER_VERTICAL|wxEXPAND);
+      pInpaint->SetSizer(pInpaintSizer);
+      pInpaint->SetSize(200, 150);
+      p = pInpaint;
+      // m_mgr.AddPane(p, wxRIGHT, wxT("Inpaint Panel"));
+    }
     m_mgr.AddPane(p, wxRIGHT, wxT("Manipulations Panel"));
   }
   
-  {
-    CreateStatusBar(2);
-    int statusbarwidths[2] = {-1, 120};
-    SetStatusWidths(2, statusbarwidths);
-    SetStatusText( _("Welcome to "APPLICATION_TITLE"!"), 0);
-  }
 
   initEvents();
   m_mgr.Update();
@@ -116,6 +120,14 @@ void MainWindow::initMainPanel()
   m_panel->SetAutoLayout(true);
 
   m_mgr.AddPane(m_panel, wxCENTER);
+}
+
+void MainWindow::initStatusBar()
+{
+  CreateStatusBar(2);
+  int statusbarwidths[2] = {-1, 120};
+  SetStatusWidths(2, statusbarwidths);
+  SetStatusText( _("Welcome to "APPLICATION_TITLE"!"), 0);
 }
 
 void MainWindow::initToolBars()

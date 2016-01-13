@@ -54,6 +54,7 @@ class MainWindow: public wxFrame
   void initMenuBar();
   void initToolBars();
   void initMainPanel();
+  void initStatusBar();
   void initEvents();
 
  protected:
